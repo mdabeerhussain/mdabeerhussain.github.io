@@ -10,14 +10,17 @@
 
     <title>Hello, world!</title>
     <link href="https://fonts.googleapis.com/css?family=Cormorant+Upright:400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Exo&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="animate.css">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div class="container">
       <div class="logo animated fadeIn">
-        <span>Md Abeer Hussain </span><small id="typewriter"></small>
+        <span>Md Abeer Hussain</span>
+      </div>
+      <div class="profession">
+        <p id="prof" class="prof"></p>
       </div>
       <div class="row">
         <div class="col-lg-3"><h2 class="about-title animated fadeIn">About Me</h2></div>
@@ -31,8 +34,8 @@
 
     <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
   <script type="text/javascript">
-    const instance = new Typewriter('#typewriter', {
-      strings: ['Designer', 'Web Developer'],
+    const instance = new Typewriter('#prof', {
+      strings: ['Entrepreneur', 'UI/UX Designer', 'Web Developer'],
       autoStart: true,
       loop: true,
     });
