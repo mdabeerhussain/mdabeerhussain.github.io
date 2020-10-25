@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
+.header-search{
+	max-width: 420px;
+}
+
+.site-main-menu>ul>li>a {
+	font-size: 18px;
+	color: #227093;
+}
+.site-main-menu>ul>li>a:hover{
+	color: #145a77;
+}
+.site-main-mobile-menu-inner::before{
+	background-color: rgba(34, 112, 147, 0.9);
+}
+.max-popup-section{
+	background-color: rgba(34, 112, 147, 0.9);	
+}
+.mobile-menu-header{
+	height: 100px;
+}
+.intro3-content .title{
+	font-weight: bold;
+	font-family: 'Merriweather', serif;
+}
+.intro3-content .sub-title{
+	color: #f39c12;
+}
+.freecourse-popup-content .title{
+	font-family: 'Merriweather', serif;
+}
+.btn{
+	font-size: 17px;
+}
+.about-content .title{
+	font-family: 'Merriweather', serif;
+}
+.funfact .number{
+	font-family: 'Merriweather', serif;	
+}
+.link mark{
+	font-size: 17px;
+}
+.section-title .title{
+	font-family: 'Merriweather', serif;	
+}
+.newsletter-content .title{
+	font-family: 'Merriweather', serif;	
+}
+.footer-widget-title{
+	font-family: 'Merriweather', serif;	
+}
+.blog .info .title{
+	font-family: 'Merriweather', serif;		
+}
