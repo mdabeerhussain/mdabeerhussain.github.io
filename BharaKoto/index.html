@@ -144,6 +144,10 @@
         if (typeof busData !== "undefined" && busData.routes) {
           routesData = busData.routes;
 
+          // Add default placeholder for the route dropdown
+          routeSelect.innerHTML =
+            '<option value="" disabled selected>বাসের রুট নির্বাচন করুন</option>';
+
           routesData.forEach((route, index) => {
             const opt = document.createElement("option");
             opt.value = index;
@@ -151,13 +155,19 @@
             routeSelect.appendChild(opt);
           });
 
-          updateStops();
+          // Add disabled placeholders for the stops before a route is picked
+          startSelect.innerHTML =
+            '<option value="" disabled selected>প্রথমে রুট নির্বাচন করুন</option>';
+          endSelect.innerHTML =
+            '<option value="" disabled selected>প্রথমে রুট নির্বাচন করুন</option>';
         } else {
           alert("ডেটা লোড করতে সমস্যা হয়েছে! data.js ফাইলটি চেক করুন।");
         }
       };
 
       function updateStops() {
+        if (routeSelect.value === "") return;
+
         const routeIndex = parseInt(routeSelect.value);
         currentRoute = routesData[routeIndex];
 
@@ -171,8 +181,11 @@
           brtaLink.style.display = "none";
         }
 
-        startSelect.innerHTML = "";
-        endSelect.innerHTML = "";
+        // Add proper placeholders for the stops now that a route is active
+        startSelect.innerHTML =
+          '<option value="" disabled selected>যাত্রা শুরুর স্থান নির্বাচন করুন</option>';
+        endSelect.innerHTML =
+          '<option value="" disabled selected>গন্তব্য নির্বাচন করুন</option>';
 
         currentRoute.stops.forEach((stop, index) => {
           const opt1 = document.createElement("option");
@@ -186,20 +199,27 @@
           endSelect.appendChild(opt2);
         });
 
-        endSelect.value = currentRoute.stops.length - 1;
-
-        calculate();
+        // Hide result box when a new route is selected until they pick new start/end points
+        resultBox.classList.add("hidden");
       }
 
       function calculate() {
+        // Ensure both start and end are actually selected (not on the placeholder)
+        if (startSelect.value === "" || endSelect.value === "") {
+          resultBox.classList.add("hidden");
+          return;
+        }
+
         const startIndex = parseInt(startSelect.value);
         const endIndex = parseInt(endSelect.value);
 
+        // Hide if they select the exact same stop
         if (startIndex === endIndex) {
           resultBox.classList.add("hidden");
           return;
         }
 
+        // Show the results box once all inputs are valid
         resultBox.classList.remove("hidden");
 
         const d1 = currentRoute.stops[startIndex].dist;
