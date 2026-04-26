@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="bn" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>বাস ভাড়া ক্যালকুলেটর</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Noto Serif Bengali", serif;
+        background-color: #09090b; /* Deep zinc background */
+        color: #f4f4f5;
+      }
+      /* Custom scrollbar for dropdowns */
+      select {
+        color-scheme: dark;
+      }
+    </style>
+    <script src="data.js"></script>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <div
+      class="bg-[#18181b] rounded-2xl shadow-2xl w-full max-w-lg p-6 sm:p-8 border border-[#27272a]"
+    >
+      <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-zinc-100 tracking-wide">
+          বাস ভাড়া ক্যালকুলেটর
+        </h1>
+        <p class="text-zinc-400 text-sm sm:text-base mt-2">
+          ঢাকা মেট্রো এলাকার বাস ভাড়ার তালিকা
+        </p>
+      </header>
+
+      <div class="space-y-6">
+        <div>
+          <label class="block text-base font-semibold text-zinc-300 mb-2"
+            >বাসের রুট নির্বাচন করুন:</label
+          >
+          <select
+            id="route"
+            class="w-full p-3 text-lg bg-[#09090b] border border-[#27272a] text-zinc-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all shadow-inner"
+          ></select>
+        </div>
+
+        <div class="w-full h-px bg-zinc-800 my-4"></div>
+
+        <div>
+          <label class="block text-base font-semibold text-zinc-300 mb-2"
+            >কোথা থেকে (শুরু):</label
+          >
+          <select
+            id="start"
+            class="w-full p-3 text-lg bg-[#09090b] border border-[#27272a] text-zinc-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all shadow-inner"
+          ></select>
+        </div>
+
+        <div>
+          <label class="block text-base font-semibold text-zinc-300 mb-2"
+            >কোথায় যাবেন (গন্তব্য):</label
+          >
+          <select
+            id="end"
+            class="w-full p-3 text-lg bg-[#09090b] border border-[#27272a] text-zinc-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all shadow-inner"
+          ></select>
+        </div>
+
+        <div
+          id="result-box"
+          class="hidden mt-8 bg-[#27272a]/30 rounded-2xl p-6 sm:p-8 text-center border border-[#27272a] transition-all duration-500"
+        >
+          <div class="text-zinc-400 text-base font-medium mb-1">মোট ভাড়া</div>
+          <div id="fare-val" class="text-5xl font-extrabold text-emerald-400">
+            ৳ ১০.০০
+          </div>
+
+          <div id="route-meta" class="text-base text-zinc-500 mt-3 mb-6">
+            --
+          </div>
+
+          <div class="w-3/4 mx-auto h-px bg-zinc-800 mb-6"></div>
+
+          <div class="text-zinc-400 text-base font-medium mb-1">
+            ভ্রমণের দূরত্ব
+          </div>
+          <div id="distance-val" class="text-3xl font-bold text-blue-400">
+            ০.০ কি.মি.
+          </div>
+
+          <a
+            id="brta-link"
+            href="#"
+            target="_blank"
+            class="inline-block mt-8 text-sm text-blue-400/80 hover:text-blue-300 transition-colors underline decoration-blue-400/30 underline-offset-4"
+          >
+            এই রুটের মূল চার্ট দেখুন (BRTA)
+          </a>
+        </div>
+      </div>
+
+      <footer class="mt-10 text-center text-sm text-zinc-500 leading-relaxed">
+        Data provided by
+        <a
+          href="http://www.brta.gov.bd/"
+          target="_blank"
+          class="text-zinc-300 hover:text-zinc-100 underline decoration-zinc-600 underline-offset-2 transition-colors"
+          >BRTA</a
+        >
+        and made by Abeer.
+      </footer>
+    </div>
+
+    <script>
+      let routesData = [];
+      let currentRoute = null;
+
+      const routeSelect = document.getElementById("route");
+      const startSelect = document.getElementById("start");
+      const endSelect = document.getElementById("end");
+      const resultBox = document.getElementById("result-box");
+      const distanceVal = document.getElementById("distance-val");
+      const fareVal = document.getElementById("fare-val");
+      const routeMeta = document.getElementById("route-meta");
+      const brtaLink = document.getElementById("brta-link");
+
+      function toBengaliNum(num) {
+        const engToBen = {
+          0: "০",
+          1: "১",
+          2: "২",
+          3: "৩",
+          4: "৪",
+          5: "৫",
+          6: "৬",
+          7: "৭",
+          8: "৮",
+          9: "৯",
+          ".": ".",
+        };
+        return num.toString().replace(/[0-9.]/g, (w) => engToBen[w]);
+      }
+
+      window.onload = () => {
+        if (typeof busData !== "undefined" && busData.routes) {
+          routesData = busData.routes;
+
+          routesData.forEach((route, index) => {
+            const opt = document.createElement("option");
+            opt.value = index;
+            opt.textContent = `${route.id}: ${route.name}`;
+            routeSelect.appendChild(opt);
+          });
+
+          updateStops();
+        } else {
+          alert("ডেটা লোড করতে সমস্যা হয়েছে! data.js ফাইলটি চেক করুন।");
+        }
+      };
+
+      function updateStops() {
+        const routeIndex = parseInt(routeSelect.value);
+        currentRoute = routesData[routeIndex];
+
+        // Update Rate Info and Link
+        routeMeta.textContent = `${toBengaliNum(currentRoute.farePerKm)} টাকা/কি.মি.`;
+
+        if (currentRoute.brtaLink) {
+          brtaLink.href = currentRoute.brtaLink;
+          brtaLink.style.display = "inline-block";
+        } else {
+          brtaLink.style.display = "none";
+        }
+
+        startSelect.innerHTML = "";
+        endSelect.innerHTML = "";
+
+        currentRoute.stops.forEach((stop, index) => {
+          const opt1 = document.createElement("option");
+          opt1.value = index;
+          opt1.textContent = stop.name;
+          startSelect.appendChild(opt1);
+
+          const opt2 = document.createElement("option");
+          opt2.value = index;
+          opt2.textContent = stop.name;
+          endSelect.appendChild(opt2);
+        });
+
+        endSelect.value = currentRoute.stops.length - 1;
+
+        calculate();
+      }
+
+      function calculate() {
+        const startIndex = parseInt(startSelect.value);
+        const endIndex = parseInt(endSelect.value);
+
+        if (startIndex === endIndex) {
+          resultBox.classList.add("hidden");
+          return;
+        }
+
+        resultBox.classList.remove("hidden");
+
+        const d1 = currentRoute.stops[startIndex].dist;
+        const d2 = currentRoute.stops[endIndex].dist;
+        const distance = Math.abs(d2 - d1);
+
+        let rawFare = distance * currentRoute.farePerKm;
+        let finalFare = Math.max(currentRoute.minFare, Math.round(rawFare));
+
+        distanceVal.textContent = toBengaliNum(distance.toFixed(1)) + " কি.মি.";
+        fareVal.textContent = "৳ " + toBengaliNum(finalFare.toFixed(2));
+      }
+
+      routeSelect.addEventListener("change", updateStops);
+      startSelect.addEventListener("change", calculate);
+      endSelect.addEventListener("change", calculate);
+    </script>
+  </body>
+</html>
